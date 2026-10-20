@@ -1,8 +1,30 @@
+import { ConsultationForm } from "@/components/sections/ConsultationForm";
+import { FeatureTabs } from "@/components/sections/FeatureTabs";
+import { Hero } from "@/components/sections/Hero";
+import { Industries } from "@/components/sections/Industries";
+import { OnboardingProcess } from "@/components/sections/OnboardingProcess";
+import { TwoTrack } from "@/components/sections/TwoTrack";
+import { Reveal } from "@/components/ui/Reveal";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-4xl font-bold tracking-tight">SN Soft</h1>
-      <p className="text-lg text-neutral-600">Homepage scaffold ready.</p>
+    <main id="main">
+      <Hero />
+      <Reveal>
+        <TwoTrack />
+      </Reveal>
+      <Reveal>
+        <FeatureTabs />
+      </Reveal>
+      <Reveal>
+        <Industries />
+      </Reveal>
+      <Reveal>
+        <OnboardingProcess />
+      </Reveal>
+      <Reveal>
+        <ConsultationForm />
+      </Reveal>
     </main>
   );
 }
