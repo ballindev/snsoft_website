@@ -46,8 +46,9 @@ export function Footer() {
               사업자등록번호 219-81-16916
             </p>
             <p>
-              주소: 서울시 금천구 가산디지털1로 226 에이스하이엔드타워5차 1903호{" "}
-              <span className="font-medium text-brand">※ 비즈모아소프트는 에스앤소프트의 가족회사입니다.</span>
+              주소: 서울시 금천구 가산디지털1로 226 에이스하이엔드타워5차 1903호
+              <span className="px-1.5 text-slate-300" aria-hidden>|</span>
+              <span className="font-semibold text-brand">※ 비즈모아소프트는 에스앤소프트의 가족회사입니다.</span>
             </p>
             <p className="text-slate-500">Copyright © 2017 SNSOFT.All rights reserved.</p>
           </div>
