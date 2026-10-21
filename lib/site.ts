@@ -342,8 +342,8 @@ export const mainNav: NavItem[] = [
           {
             label: "기업소개",
             href: "/about",
-            description: "중소·제조·유통 기업을 위한 BizMore ERP를 만듭니다.",
-            body: "에스앤소프트는 중소기업, 제조, 유통, 회계 현장에 맞춘 클라우드 웹 ERP BizMore를 제공합니다. 검증된 표준 업무는 패키지로 합리적으로 시작하고, 회사만의 공정과 유통 로직은 컨설턴트와 1:1로 맞춥니다.",
+            description: "고객의 성장을 위해 에스앤소프트는 달리고 있습니다. 언제나 목표는 고객의 승리입니다.",
+            body: "에스앤소프트(주)는 기업업무전산화를 위한 소프트웨어를 개발하여 기업의 업무 효율성 향상에 기여하고 있습니다. 차세대 클라우드형 ERP솔루션 BizMore ERP를 서비스 중입니다.",
             imageLabel: "에스앤소프트 사옥 또는 팀 작업 현장 사진",
             imageResolution: photo,
           },

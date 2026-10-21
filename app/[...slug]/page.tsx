@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Subpage } from "@/components/layout/Subpage";
+import { CompanyOverview } from "@/components/sections/CompanyOverview";
 import { getPage, getStaticSlugParams } from "@/lib/site";
 
 type Params = { slug: string[] };
@@ -22,5 +23,6 @@ export default async function CatchAllPage({ params }: { params: Promise<Params>
   const { slug } = await params;
   const page = getPage(slug);
   if (!page) notFound();
+  if (page.href === "/about") return <CompanyOverview />;
   return <Subpage page={page} />;
 }
