@@ -256,7 +256,7 @@ export function CompanyOverview() {
     <main id="main">
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-5xl text-center">
             <p className="text-sm font-semibold text-brand">회사소개</p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-navy sm:text-4xl">기업소개</h1>
             <p className="mt-8 text-2xl font-semibold leading-snug tracking-tight text-navy sm:text-3xl">
@@ -271,7 +271,7 @@ export function CompanyOverview() {
 
       <section id="overview" className="scroll-mt-36 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-5xl">
             <SectionTitle title="기업 개요" />
             <div className="mt-6 space-y-5 text-base leading-8 text-slate-700">
               {overview.map((paragraph) => (
@@ -284,7 +284,7 @@ export function CompanyOverview() {
 
       <section id="greeting" className="scroll-mt-36 border-t border-slate-200 bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-5xl">
             <SectionTitle title="CEO 인사말" />
             <blockquote className="mt-6 border-l-4 border-brand pl-5 text-lg font-medium leading-8 text-navy">
               언제나 든든한 고객기업의 정보관리파트너가 되어 드리겠습니다.
@@ -301,7 +301,7 @@ export function CompanyOverview() {
 
       <section id="history" className="scroll-mt-36 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-5xl">
             <SectionTitle title="기업연혁" />
             <ol className="mt-10 space-y-10">
               {history.map((group) => (
@@ -359,7 +359,7 @@ export function CompanyOverview() {
       <section id="service" className="scroll-mt-36 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionTitle title="서비스정신" />
-          <p className="mx-auto mt-6 max-w-3xl text-base leading-8 text-slate-700">{serviceIntro}</p>
+          <p className="mx-auto mt-6 max-w-5xl text-base leading-8 text-slate-700">{serviceIntro}</p>
           <div className="mx-auto mt-12 max-w-5xl lg:grid lg:grid-cols-[9rem_2.5rem_minmax(0,1fr)] lg:grid-rows-3">
             <div className="mb-8 lg:col-start-1 lg:row-span-3 lg:row-start-1 lg:mb-0 lg:flex lg:items-center">
               <div>
@@ -397,7 +397,7 @@ export function CompanyOverview() {
 
       <section id="awards" className="scroll-mt-36 border-t border-slate-200 bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-5xl">
             <SectionTitle title="수상내역" />
             <ol className="mt-10 space-y-4">
               {awards.map((award) => (

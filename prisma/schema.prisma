@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InquiryStatus {
+  received
+  contacting
+  done
+}
+
+model Inquiry {
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now()) @map("created_at")
+  company        String
+  name           String
+  phone          String
+  email          String
+  industry       String
+  deployment     String
+  interests      String[]
+  message        String        @default("")
+  attachmentName String        @default("") @map("attachment_name")
+  attachmentPath String?       @map("attachment_path")
+  status         InquiryStatus @default(received)
+
+  @@index([status, createdAt])
+  @@map("inquiries")
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  sortOrder Int      @map("sort_order")
+  published Boolean  @default(true)
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([published, sortOrder])
+  @@map("faqs")
+}
+
+model ScreenSlide {
+  id          String   @id @default(cuid())
+  pageKey     String   @map("page_key")
+  title       String
+  description String
+  imageUrl    String?  @map("image_url")
+  sortOrder   Int      @map("sort_order")
+  published   Boolean  @default(true)
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([pageKey, published, sortOrder])
+  @@map("screen_slides")
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  name         String
+  passwordHash String    @map("password_hash")
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}

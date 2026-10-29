@@ -1,14 +1,22 @@
 # snsoft_website
 
-SN Soft homepage (Next.js App Router + TypeScript + Tailwind CSS).
+SN Soft homepage (Next.js App Router + TypeScript + Tailwind CSS + Prisma/Supabase).
 
 ## Getting Started
 
+1. `.env.local` / `.env`에 Supabase **Session pooler** `DATABASE_URL`을 넣습니다.
+2. 의존성 설치 후 마이그레이션·시드:
+
 ```bash
 npm install
+npx prisma migrate dev
+npx prisma db seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).  
+Admin: [http://localhost:3000/admin](http://localhost:3000/admin) (`admin` / `admin123`)
 
-Included: `framer-motion`, `lucide-react`.
+## Database
+
+Tables: `inquiries`, `faqs`, `screen_slides`, `admin_users`.
