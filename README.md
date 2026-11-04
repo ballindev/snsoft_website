@@ -4,7 +4,7 @@ SN Soft homepage (Next.js App Router + TypeScript + Tailwind CSS + Prisma/Supaba
 
 ## Getting Started
 
-1. `.env.local` / `.env`에 Supabase **Session pooler** `DATABASE_URL`을 넣습니다.
+1. `.env.local` / `.env`에 Supabase **Transaction pooler**(`DATABASE_URL`, 포트 6543)와 **Session pooler**(`DIRECT_URL`, 포트 5432)를 넣습니다.
 2. 의존성 설치 후 마이그레이션·시드:
 
 ```bash

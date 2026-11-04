@@ -36,6 +36,8 @@ function ScreenListItem({
   onSave,
   onRemove,
   onMessage,
+  onDragStart,
+  onDragEnd,
 }: {
   item: AdminScreenSlide;
   order: number;
@@ -49,6 +51,8 @@ function ScreenListItem({
   onSave: () => void;
   onRemove: () => void;
   onMessage: (message: string) => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 }) {
   const controls = useDragControls();
   const reduce = useReducedMotion();
@@ -89,6 +93,8 @@ function ScreenListItem({
       drag={!editing && !isNew}
       layout={reduce ? undefined : "position"}
       className={`rounded-3xl border bg-white p-5 shadow-sm ${editing ? "border-brand/40" : "border-slate-200"}`}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
     >
       {editing ? (
         <div className="space-y-4">
@@ -240,6 +246,11 @@ export function ScreenManager({
   const [message, setMessage] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const itemsRef = useRef(items);
+  const pageKeyRef = useRef(pageKey);
+  const dragSnapshotRef = useRef<AdminScreenSlide[] | null>(null);
+  itemsRef.current = items;
+  pageKeyRef.current = pageKey;
 
   const currentPageSlides = useMemo(() => {
     const list = items.filter((item) => item.pageKey === pageKey);
@@ -279,11 +290,30 @@ export function ScreenManager({
 
   function onReorder(next: AdminScreenSlide[]) {
     if (editingId === NEW_ID) return;
-    const previous = items;
-    setItems((current) => mergePageOrder(current, next, pageKey));
+    if (!dragSnapshotRef.current) dragSnapshotRef.current = itemsRef.current;
+    setItems((current) => mergePageOrder(current, next, pageKeyRef.current));
+  }
+
+  function onDragStart() {
+    if (!dragSnapshotRef.current) {
+      dragSnapshotRef.current = itemsRef.current;
+    }
+  }
+
+  function onDragEnd() {
+    const previous = dragSnapshotRef.current;
+    dragSnapshotRef.current = null;
+    if (!previous) return;
+
+    const key = pageKeyRef.current;
+    const nextItems = itemsRef.current;
+    const previousIds = previous.filter((item) => item.pageKey === key).map((item) => item.id).join(",");
+    const nextIds = nextItems.filter((item) => item.pageKey === key).map((item) => item.id);
+    if (previousIds === nextIds.join(",")) return;
+
     startTransition(async () => {
       try {
-        setItems(await reorderScreenSlidesAction(pageKey, next.map((item) => item.id)));
+        await reorderScreenSlidesAction(key, nextIds);
         setMessage("순서를 저장했습니다.");
       } catch {
         setItems(previous);
@@ -402,6 +432,8 @@ export function ScreenManager({
               onSave={save}
               onRemove={() => requestRemove(item.id)}
               onMessage={setMessage}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
             />
           ))}
         </Reorder.Group>

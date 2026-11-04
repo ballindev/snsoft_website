@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, Reorder, useDragControls, useReducedMotion } from "framer-motion";
 import { Check, ChevronDown, GripVertical, Pencil, Plus, Trash2, X } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { refreshFaqsAction, removeFaqAction, reorderFaqsAction, saveFaqAction } from "@/app/admin/actions";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import type { AdminFaq } from "@/lib/admin-data";
@@ -27,6 +27,8 @@ function FaqListItem({
   onDraftChange,
   onSave,
   onRemove,
+  onDragStart,
+  onDragEnd,
 }: {
   item: AdminFaq;
   order: number;
@@ -41,6 +43,8 @@ function FaqListItem({
   onDraftChange: (next: DraftFaq) => void;
   onSave: () => void;
   onRemove: () => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 }) {
   const controls = useDragControls();
   const reduce = useReducedMotion();
@@ -56,6 +60,8 @@ function FaqListItem({
       transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34, mass: 0.6 }}
       className={`rounded-3xl border bg-white shadow-sm ${editing ? "border-brand/40" : "border-slate-200"}`}
       whileDrag={reduce || !canDrag || editing ? undefined : { scale: 1.01, boxShadow: "0 16px 40px -24px rgba(15, 23, 42, 0.45)", zIndex: 20 }}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
     >
       {editing ? (
         <div className="p-4 sm:p-5">
@@ -177,8 +183,21 @@ function FaqListItem({
                 exit={reduce ? undefined : { height: 0, opacity: 0 }}
                 className="overflow-hidden"
               >
-                <div className="px-4 pt-3 sm:px-5">
-                  <p className="border-t border-slate-100 pt-4 text-sm leading-6 text-slate-600">{item.answer}</p>
+                <div className="flex items-start gap-1 px-4 pt-3 sm:gap-2 sm:px-5">
+                  <span className="invisible shrink-0 p-1.5" aria-hidden>
+                    <GripVertical className="size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1 border-t border-slate-100 pt-4">
+                    <p className="text-sm leading-6 text-slate-600">{item.answer}</p>
+                  </div>
+                  <div className="invisible flex shrink-0 gap-1" aria-hidden>
+                    <span className="rounded-lg p-2">
+                      <Pencil className="size-4" />
+                    </span>
+                    <span className="rounded-lg p-2">
+                      <Trash2 className="size-4" />
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             ) : null}
@@ -215,6 +234,9 @@ export function FaqManager({ initialItems }: { initialItems: AdminFaq[] }) {
   const [message, setMessage] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const itemsRef = useRef(items);
+  const dragSnapshotRef = useRef<AdminFaq[] | null>(null);
+  itemsRef.current = items;
 
   const publishedCount = items.filter((item) => item.published).length;
   const displayItems = useMemo(() => {
@@ -261,14 +283,31 @@ export function FaqManager({ initialItems }: { initialItems: AdminFaq[] }) {
 
   function onReorder(next: AdminFaq[]) {
     if (editingId === NEW_ID) return;
-    const previous = items;
-    const nextItems = filter === "published" ? mergeSubsetOrder(items, next, true) : next;
-    setItems(nextItems);
+    if (!dragSnapshotRef.current) dragSnapshotRef.current = itemsRef.current;
+    setItems(filter === "published" ? mergeSubsetOrder(itemsRef.current, next, true) : next);
+  }
+
+  function onDragStart() {
+    if (!dragSnapshotRef.current) {
+      dragSnapshotRef.current = itemsRef.current;
+    }
+  }
+
+  function onDragEnd() {
+    const previous = dragSnapshotRef.current;
+    dragSnapshotRef.current = null;
+    if (!previous) return;
+
+    const nextItems = itemsRef.current;
+    const previousIds = previous.map((item) => item.id).join(",");
+    const nextIds = nextItems.map((item) => item.id).join(",");
+    if (previousIds === nextIds) return;
+
     const publishedIds = nextItems.filter((item) => item.published).map((item) => item.id);
     const unpublishedIds = nextItems.filter((item) => !item.published).map((item) => item.id);
     startTransition(async () => {
       try {
-        setItems(await reorderFaqsAction([...publishedIds, ...unpublishedIds]));
+        await reorderFaqsAction([...publishedIds, ...unpublishedIds]);
         setMessage("순서를 저장했습니다.");
       } catch {
         setItems(previous);
@@ -378,7 +417,7 @@ export function FaqManager({ initialItems }: { initialItems: AdminFaq[] }) {
               item={item}
               order={editingId === NEW_ID ? index : index + 1}
               open={openIds.includes(item.id) || editingId === item.id}
-              canDrag={canDrag && !pending && item.id !== NEW_ID}
+              canDrag={canDrag && item.id !== NEW_ID}
               editing={editingId === item.id}
               draft={draft}
               pending={pending}
@@ -388,6 +427,8 @@ export function FaqManager({ initialItems }: { initialItems: AdminFaq[] }) {
               onDraftChange={setDraft}
               onSave={save}
               onRemove={() => requestRemove(item.id)}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
             />
           ))}
         </Reorder.Group>
