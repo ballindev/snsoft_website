@@ -2,6 +2,7 @@ import type { AdminUser, Faq, Inquiry, InquiryStatus, ScreenSlide } from "@prism
 import bcrypt from "bcryptjs";
 import type { ConsultationPayload } from "@/lib/consultation";
 import { prisma } from "@/lib/db";
+import { listNavMenuEntries } from "@/lib/nav-menu";
 
 export type { InquiryStatus };
 
@@ -43,6 +44,13 @@ export type AdminAccount = {
   username: string;
   name: string;
   lastLoginAt: string | null;
+};
+
+export type AdminNavMenuItem = {
+  href: string;
+  label: string;
+  section: string;
+  visible: boolean;
 };
 
 export const inquiryStatusLabel: Record<InquiryStatus, string> = {
@@ -269,13 +277,103 @@ export async function reorderScreenSlides(pageKey: string, orderedIds: string[])
 }
 
 export async function countDashboard() {
-  const [inquiries, faqs, screens, accounts] = await Promise.all([
+  const [inquiries, faqs, screens, accounts, hiddenMenus] = await Promise.all([
     prisma.inquiry.count(),
     prisma.faq.count(),
     prisma.screenSlide.count(),
     prisma.adminUser.count(),
+    prisma.navMenuVisibility.count({ where: { visible: false } }),
   ]);
-  return { inquiries, faqs, screens, accounts };
+  return { inquiries, faqs, screens, accounts, hiddenMenus };
+}
+
+export async function ensureNavMenuVisibilityRows() {
+  const entries = listNavMenuEntries();
+  const existing = await prisma.navMenuVisibility.findMany({
+    where: { href: { in: entries.map((entry) => entry.href) } },
+    select: { href: true, label: true, section: true },
+  });
+  const byHref = new Map(existing.map((row) => [row.href, row]));
+
+  const toCreate = entries.filter((entry) => !byHref.has(entry.href));
+  const toRelabel = entries.filter((entry) => {
+    const row = byHref.get(entry.href);
+    return row && (row.label !== entry.label || row.section !== entry.section);
+  });
+
+  if (toCreate.length === 0 && toRelabel.length === 0) return;
+
+  await prisma.$transaction([
+    ...(toCreate.length
+      ? [
+          prisma.navMenuVisibility.createMany({
+            data: toCreate.map((entry) => ({
+              href: entry.href,
+              label: entry.label,
+              section: entry.section,
+              visible: true,
+            })),
+            skipDuplicates: true,
+          }),
+        ]
+      : []),
+    ...toRelabel.map((entry) =>
+      prisma.navMenuVisibility.update({
+        where: { href: entry.href },
+        data: { label: entry.label, section: entry.section },
+      }),
+    ),
+  ]);
+}
+
+export async function listNavMenuVisibility(): Promise<AdminNavMenuItem[]> {
+  const entries = listNavMenuEntries();
+  await ensureNavMenuVisibilityRows();
+  const rows = await prisma.navMenuVisibility.findMany({
+    where: { href: { in: entries.map((entry) => entry.href) } },
+  });
+  const byHref = new Map(rows.map((row) => [row.href, row]));
+
+  return entries.map((entry) => {
+    const row = byHref.get(entry.href);
+    return {
+      href: entry.href,
+      label: entry.label,
+      section: entry.section,
+      visible: row?.visible ?? true,
+    };
+  });
+}
+
+export async function setNavMenuVisible(href: string, visible: boolean) {
+  const entry = listNavMenuEntries().find((item) => item.href === href);
+  if (!entry) throw new Error("unknown menu href");
+
+  const row = await prisma.navMenuVisibility.upsert({
+    where: { href },
+    create: {
+      href: entry.href,
+      label: entry.label,
+      section: entry.section,
+      visible,
+    },
+    update: { visible },
+  });
+
+  return {
+    href: row.href,
+    label: row.label,
+    section: row.section,
+    visible: row.visible,
+  } satisfies AdminNavMenuItem;
+}
+
+export async function getHiddenNavHrefs(): Promise<string[]> {
+  const rows = await prisma.navMenuVisibility.findMany({
+    where: { visible: false },
+    select: { href: true },
+  });
+  return rows.map((row) => row.href);
 }
 
 export async function listAccounts() {

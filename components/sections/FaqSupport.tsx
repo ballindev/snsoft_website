@@ -61,7 +61,7 @@ export function FaqSupport({ page, faqs }: { page: SitePage; faqs: Faq[] }) {
             </li>
             <li>
               <Link href="/support/forms" className="font-semibold text-brand underline-offset-4 hover:underline">
-                서식/양식지 신청
+                양식지 주문
               </Link>
             </li>
             <li>

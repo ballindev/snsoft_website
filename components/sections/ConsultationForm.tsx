@@ -6,6 +6,7 @@ import {
   DEPLOYMENT_OPTIONS,
   INDUSTRY_OPTIONS,
   INTEREST_OPTIONS,
+  PRIVACY_CONSENT_NOTICE,
   validateConsultation,
   type ConsultationErrors,
   type ConsultationPayload,
@@ -22,6 +23,7 @@ const emptyForm: ConsultationPayload = {
   interests: [],
   message: "",
   attachmentName: "",
+  privacyConsent: false,
 };
 
 const fieldClass =
@@ -97,13 +99,9 @@ export function ConsultationForm() {
               </span>
               <h3 className="mt-4 text-2xl font-semibold tracking-tight text-navy">신청 내용을 확인했습니다.</h3>
               <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-600">
-                입력은 정상이지만, 컨설턴트에게 자동으로 전달하는 메일·저장 연동은 아직 연결 전입니다. 연결 전에는 이 신청이 보관되지 않습니다.
+                상담 신청이 접수되었습니다. 입력해 주신 내용을 확인한 뒤 담당 컨설턴트가 연락드리겠습니다.
+                이메일을 남겨 주셨다면 접수 확인 메일도 발송됩니다.
               </p>
-              {process.env.NODE_ENV === "development" ? (
-                <p className="mx-auto mt-3 max-w-lg text-xs leading-5 text-slate-500">
-                  개발 서버 터미널에 신청 내용이 기록됩니다.
-                </p>
-              ) : null}
               <button
                 type="button"
                 className="mt-6 rounded-full bg-navy px-5 py-2.5 text-sm font-semibold text-white"
@@ -119,15 +117,19 @@ export function ConsultationForm() {
             </div>
           ) : (
             <form onSubmit={onSubmit} noValidate aria-describedby={serverMessage ? "consultation-status" : undefined}>
+              <p className="mb-5 text-sm text-slate-600">
+                <span className="font-semibold text-brand">*</span> 표시는 필수 입력 항목입니다. (담당자 성함, 연락처, 희망 도입 형태)
+              </p>
+
               <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="담당자 성함" error={errors.name} htmlFor="name" required>
+                  <input id="name" className={fieldClass} value={form.name} autoComplete="name" required onChange={(event) => update({ name: event.target.value })} />
+                </Field>
                 <Field label="회사명" error={errors.company} htmlFor="company">
                   <input id="company" className={fieldClass} value={form.company} autoComplete="organization" onChange={(event) => update({ company: event.target.value })} />
                 </Field>
-                <Field label="담당자 성함" error={errors.name} htmlFor="name">
-                  <input id="name" className={fieldClass} value={form.name} autoComplete="name" onChange={(event) => update({ name: event.target.value })} />
-                </Field>
-                <Field label="연락처" error={errors.phone} htmlFor="phone">
-                  <input id="phone" className={fieldClass} value={form.phone} autoComplete="tel" inputMode="tel" onChange={(event) => update({ phone: event.target.value })} />
+                <Field label="연락처" error={errors.phone} htmlFor="phone" required>
+                  <input id="phone" className={fieldClass} value={form.phone} autoComplete="tel" inputMode="tel" required onChange={(event) => update({ phone: event.target.value })} />
                 </Field>
                 <Field label="이메일" error={errors.email} htmlFor="email">
                   <input id="email" type="email" className={fieldClass} value={form.email} autoComplete="email" onChange={(event) => update({ email: event.target.value })} />
@@ -149,7 +151,10 @@ export function ConsultationForm() {
               </Field>
 
               <fieldset className="mt-6">
-                <legend className="text-sm font-semibold text-navy">희망 도입 형태</legend>
+                <legend className="text-sm font-semibold text-navy">
+                  희망 도입 형태 <span className="text-brand" aria-hidden>*</span>
+                  <span className="sr-only">(필수)</span>
+                </legend>
                 <div className="mt-3 grid gap-3 md:grid-cols-3">
                   {DEPLOYMENT_OPTIONS.map((option) => {
                     const selected = form.deployment === option.value;
@@ -244,6 +249,40 @@ export function ConsultationForm() {
                 ) : null}
               </div>
 
+              <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+                <p className="text-sm font-semibold text-navy">{PRIVACY_CONSENT_NOTICE.title}</p>
+                <dl className="mt-3 space-y-2 text-xs leading-5 text-slate-600 sm:text-sm sm:leading-6">
+                  <div>
+                    <dt className="inline font-medium text-slate-700">수집·이용 목적: </dt>
+                    <dd className="inline">{PRIVACY_CONSENT_NOTICE.purpose}</dd>
+                  </div>
+                  <div>
+                    <dt className="inline font-medium text-slate-700">수집 항목: </dt>
+                    <dd className="inline">{PRIVACY_CONSENT_NOTICE.items}</dd>
+                  </div>
+                  <div>
+                    <dt className="inline font-medium text-slate-700">보유·이용 기간: </dt>
+                    <dd className="inline">{PRIVACY_CONSENT_NOTICE.retention}</dd>
+                  </div>
+                </dl>
+                <p className="mt-3 text-xs leading-5 text-slate-500">{PRIVACY_CONSENT_NOTICE.note}</p>
+                <label className="mt-4 flex cursor-pointer items-start gap-3">
+                  <input
+                    id="privacyConsent"
+                    type="checkbox"
+                    checked={form.privacyConsent}
+                    className="mt-0.5 size-4 rounded border-slate-300 text-brand focus:ring-brand"
+                    onChange={(event) => update({ privacyConsent: event.target.checked })}
+                  />
+                  <span className="text-sm font-medium text-navy">
+                    개인정보 수집·이용에 동의합니다. <span className="text-brand">(필수)</span>
+                  </span>
+                </label>
+                {errors.privacyConsent ? (
+                  <p className="mt-2 text-sm text-rose-600">{errors.privacyConsent}</p>
+                ) : null}
+              </div>
+
               {serverMessage ? (
                 <p id="consultation-status" className="mt-4 text-sm text-rose-600" role="alert">{serverMessage}</p>
               ) : null}
@@ -271,17 +310,29 @@ function Field({
   error,
   htmlFor,
   className = "",
+  required = false,
   children,
 }: {
   label: string;
   error?: string;
   htmlFor: string;
   className?: string;
+  required?: boolean;
   children: ReactNode;
 }) {
   return (
     <div className={className}>
-      <label htmlFor={htmlFor} className="text-sm font-semibold text-navy">{label}</label>
+      <label htmlFor={htmlFor} className="text-sm font-semibold text-navy">
+        {label}
+        {required ? (
+          <>
+            <span className="ml-0.5 text-brand" aria-hidden>
+              *
+            </span>
+            <span className="sr-only">(필수)</span>
+          </>
+        ) : null}
+      </label>
       {children}
       {error ? <p className="mt-1.5 text-sm text-rose-600">{error}</p> : null}
     </div>

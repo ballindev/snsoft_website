@@ -1,11 +1,25 @@
 import Link from "next/link";
-import { ArrowRight, BarChart3, Building2, Globe, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  Building2,
+  FileSpreadsheet,
+  Globe,
+  Grid3x3,
+  Layers,
+  LineChart,
+  RefreshCw,
+  Settings2,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { SalesPreview } from "@/components/mocks/ErpPreviews";
 import { CONSULTATION_HREF } from "@/lib/site";
 import { primaryButtonClass } from "@/components/ui/buttons";
 import { InventoryFunctions } from "@/components/sections/InventoryFunctions";
 import { InventoryScreens } from "@/components/sections/InventoryScreens";
 import { InventorySectionNav } from "@/components/sections/InventorySectionNav";
+import { ProductHighlights } from "@/components/sections/ProductHighlights";
 import type { ProductScreen } from "@/lib/product-screens";
 
 const points = [
@@ -14,33 +28,18 @@ const points = [
   { icon: BarChart3, label: "실시간 매출·재고·미수" },
 ];
 
-const featured = [
-  {
-    icon: Globe,
-    title: "언제 어디서나",
-    body: "100% 웹기반 서비스로 언제, 어디서나",
-  },
-  {
-    icon: BarChart3,
-    title: "매출·재고를 한눈에",
-    body: "매출, 재고현황이 한 눈에 확인 및 분석 가능",
-  },
-  {
-    icon: ShieldCheck,
-    title: "사업장·사원별 권한",
-    body: "사업장별, 사원별, 메뉴별 세부 권한 설정 가능",
-  },
-];
-
-const moreStrengths = [
-  "편리하고 파워풀한 그리드 기능",
-  "빠른 엑셀 파일 전환",
-  "다양한 사용자 옵션",
-  "전표 작성시 세부정보 확인 가능",
-  "초보자도 쉽게 사용 가능한 UI로 구성",
-  "분기별 자동 업그레이드",
-  "타 제품과 유기적인 통합 관리 가능",
-  "다양한 분석자료",
+const highlights = [
+  { icon: Globe, body: "100% 웹기반 서비스로 언제, 어디서나" },
+  { icon: BarChart3, body: "매출, 재고현황이 한 눈에 확인 및 분석 가능" },
+  { icon: ShieldCheck, body: "사업장별, 사원별, 메뉴별 세부 권한 설정 가능" },
+  { icon: Grid3x3, body: "편리하고 파워풀한 그리드 기능" },
+  { icon: FileSpreadsheet, body: "빠른 엑셀 파일 전환" },
+  { icon: Settings2, body: "다양한 사용자 옵션" },
+  { icon: Layers, body: "전표 작성시 세부정보 확인 가능" },
+  { icon: Sparkles, body: "초보자도 쉽게 사용 가능한 UI로 구성" },
+  { icon: RefreshCw, body: "분기별 자동 업그레이드" },
+  { icon: Layers, body: "타 제품과 유기적인 통합 관리 가능" },
+  { icon: LineChart, body: "다양한 분석자료" },
 ];
 
 const effects = [
@@ -91,29 +90,7 @@ export function InventoryProduct({ screens }: { screens: ProductScreen[] }) {
 
       <InventorySectionNav />
 
-      <section id="highlights" className="scroll-mt-36 py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center text-2xl font-semibold tracking-tight text-navy sm:text-3xl">특장점</h2>
-          <ul className="mt-10 grid gap-4 lg:grid-cols-3">
-            {featured.map((item) => (
-              <li key={item.title} className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-blue-50 text-brand">
-                  <item.icon className="size-5" aria-hidden />
-                </span>
-                <h3 className="mt-5 text-lg font-semibold tracking-tight text-navy">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{item.body}</p>
-              </li>
-            ))}
-          </ul>
-          <ul className="mt-4 flex flex-wrap justify-center gap-2">
-            {moreStrengths.map((item) => (
-              <li key={item} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <ProductHighlights items={highlights} />
 
       <section id="effects" className="scroll-mt-36 bg-navy py-16 text-white sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

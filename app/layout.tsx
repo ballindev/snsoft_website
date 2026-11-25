@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { getPublicNavChrome } from "@/lib/public-nav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,11 +23,13 @@ export const metadata: Metadata = {
     "중소·제조·유통기업을 위한 클라우드 웹 ERP. 회계·재고·주문은 표준 패키지로 시작하고, 특수 공정과 유통 로직은 1:1 맞춤으로 확장합니다.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const chrome = await getPublicNavChrome();
+
   return (
     <html lang="ko" data-scroll-behavior="smooth">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -36,7 +39,13 @@ export default function RootLayout({
         >
           본문 바로가기
         </a>
-        <SiteChrome>{children}</SiteChrome>
+        <SiteChrome
+          nav={chrome.nav}
+          showRemoteSupport={chrome.showRemoteSupport}
+          showConsultationCta={chrome.showConsultationCta}
+        >
+          {children}
+        </SiteChrome>
       </body>
     </html>
   );

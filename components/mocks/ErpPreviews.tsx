@@ -203,6 +203,48 @@ export function SalesPreview() {
   );
 }
 
+export function OrdersPreview() {
+  const rows = [
+    ["PO-8841", "한빛식품", "수주 자동", "출고대기"],
+    ["PO-8842", "서울유통", "수주 자동", "출고완료"],
+    ["PO-8843", "푸른상사", "수주 자동", "주문접수"],
+  ];
+
+  return (
+    <WindowChrome title="주문관리 · 수주/출고">
+      <div className="p-4">
+        <div className="mb-3 rounded-xl bg-blue-50 px-3 py-2.5 text-xs text-navy">
+          거래처 주문전표 → 판매처 수주전표 자동 생성
+        </div>
+        <div className="overflow-hidden rounded-xl border border-slate-100">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 text-slate-500">
+              <tr>
+                <th className="px-3 py-2 font-medium">주문</th>
+                <th className="px-3 py-2 font-medium">거래처</th>
+                <th className="hidden px-3 py-2 font-medium sm:table-cell">연동</th>
+                <th className="px-3 py-2 font-medium">상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(([order, partner, link, status]) => (
+                <tr key={order} className="border-t border-slate-100">
+                  <td className="px-3 py-2.5 font-medium text-navy">{order}</td>
+                  <td className="px-3 py-2.5 text-slate-700">{partner}</td>
+                  <td className="hidden px-3 py-2.5 text-slate-600 sm:table-cell">{link}</td>
+                  <td className="px-3 py-2.5">
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 font-medium text-slate-700">{status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </WindowChrome>
+  );
+}
+
 export function ProductionPreview() {
   return (
     <WindowChrome title="생산자재 BOM">
@@ -252,6 +294,147 @@ export function SpecialtyPreview() {
         <div className="flex items-center gap-2 rounded-xl bg-navy px-3 py-3 text-white">
           <ScanBarcode className="size-4 shrink-0" />
           <p className="text-xs">최근 스캔 · 출고 12박스 · 한빛식품</p>
+        </div>
+      </div>
+    </WindowChrome>
+  );
+}
+
+export function CrmPreview() {
+  const rows = [
+    ["한빛식품", "계약갱신 상담", "청구대기"],
+    ["메디칼라인", "시리얼 조회", "수납완료"],
+    ["푸른유통", "견적 요청", "상담중"],
+  ];
+
+  return (
+    <WindowChrome title="고객관리 CRM">
+      <div className="grid gap-2 p-4 sm:grid-cols-3">
+        {[
+          ["오늘 상담", "18"],
+          ["청구대기", "7"],
+          ["미수 고객", "12"],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-xl bg-slate-50 px-3 py-3">
+            <p className="text-[11px] text-slate-500">{label}</p>
+            <p className="mt-1 text-xl font-semibold tabular-nums text-navy">{value}</p>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 pb-4">
+        <div className="overflow-hidden rounded-xl border border-slate-100">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 text-slate-500">
+              <tr>
+                <th className="px-3 py-2 font-medium">거래처</th>
+                <th className="px-3 py-2 font-medium">최근 상담</th>
+                <th className="px-3 py-2 font-medium">상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(([partner, consult, status]) => (
+                <tr key={partner} className="border-t border-slate-100">
+                  <td className="px-3 py-2.5 text-slate-700">{partner}</td>
+                  <td className="px-3 py-2.5 text-slate-600">{consult}</td>
+                  <td className="px-3 py-2.5">
+                    <span className="rounded-full bg-blue-50 px-2 py-0.5 font-medium text-brand">{status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </WindowChrome>
+  );
+}
+
+export function BankingPreview() {
+  const rows = [
+    ["국민은행", "7,484,727", "출금가능"],
+    ["기업은행", "3,120,000", "조회완료"],
+    ["신한은행", "1,850,400", "조회완료"],
+  ];
+
+  return (
+    <WindowChrome title="통합금융 · 즉시이체">
+      <div className="grid gap-2 p-4 sm:grid-cols-3">
+        {[
+          ["출금가능액", "7.4M"],
+          ["이체대기", "12건"],
+          ["오늘 이체", "8건"],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-xl bg-slate-50 px-3 py-3">
+            <p className="text-[11px] text-slate-500">{label}</p>
+            <p className="mt-1 text-xl font-semibold tabular-nums text-navy">{value}</p>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 pb-4">
+        <div className="overflow-hidden rounded-xl border border-slate-100">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 text-slate-500">
+              <tr>
+                <th className="px-3 py-2 font-medium">계좌</th>
+                <th className="px-3 py-2 font-medium">잔액</th>
+                <th className="px-3 py-2 font-medium">상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(([bank, balance, status]) => (
+                <tr key={bank} className="border-t border-slate-100">
+                  <td className="px-3 py-2.5 text-slate-700">{bank}</td>
+                  <td className="px-3 py-2.5 tabular-nums text-navy">{balance}</td>
+                  <td className="px-3 py-2.5">
+                    <span className="rounded-full bg-blue-50 px-2 py-0.5 font-medium text-brand">{status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </WindowChrome>
+  );
+}
+
+export function BuildingPreview() {
+  const units = [
+    ["A동 1203", "관리비", "428,000", "완납"],
+    ["B동 805", "관리비", "512,400", "연체"],
+    ["C동 401", "주차요금", "80,000", "완납"],
+  ];
+
+  return (
+    <WindowChrome title="빌딩 · 관리비 부과/수납">
+      <div className="space-y-3 p-4">
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            ["당월 부과", "48.2M"],
+            ["수납", "41.6M"],
+            ["미납", "6.6M"],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-xl bg-[#f4f7fb] px-3 py-2.5">
+              <p className="text-[10px] font-medium text-slate-500">{label}</p>
+              <p className="mt-1 text-sm font-semibold tabular-nums text-navy">{value}</p>
+            </div>
+          ))}
+        </div>
+        <div className="overflow-hidden rounded-xl border border-slate-100">
+          <div className="grid grid-cols-[1.2fr_0.8fr_0.9fr_0.6fr] gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2 text-[10px] font-semibold text-slate-500">
+            <span>동호</span>
+            <span>항목</span>
+            <span>금액</span>
+            <span>상태</span>
+          </div>
+          {units.map(([unit, item, amount, status]) => (
+            <div key={unit + item} className="grid grid-cols-[1.2fr_0.8fr_0.9fr_0.6fr] gap-2 border-b border-slate-50 px-3 py-2.5 last:border-b-0">
+              <span className="text-[11px] font-semibold text-navy">{unit}</span>
+              <span className="text-[11px] text-slate-500">{item}</span>
+              <span className="text-[11px] tabular-nums text-slate-700">{amount}</span>
+              <span className={`text-[11px] font-medium ${status === "연체" ? "text-rose-600" : "text-emerald-600"}`}>{status}</span>
+            </div>
+          ))}
         </div>
       </div>
     </WindowChrome>

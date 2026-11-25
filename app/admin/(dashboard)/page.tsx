@@ -9,6 +9,7 @@ export default async function AdminDashboardPage() {
     { href: "/admin/inquiries", label: "온라인 문의", value: counts.inquiries, hint: "접수·연락중·완료 상태 확인" },
     { href: "/admin/faqs", label: "자주 묻는 질문", value: counts.faqs, hint: "공개 FAQ 추가·수정" },
     { href: "/admin/screens", label: "예시 화면", value: counts.screens, hint: "제품·업종 슬라이드 이미지" },
+    { href: "/admin/menus", label: "메뉴 표시", value: counts.hiddenMenus, hint: "헤더·푸터에서 숨긴 메뉴 수" },
     { href: "/admin/accounts", label: "관리자 계정", value: counts.accounts, hint: "로그인 계정 관리" },
   ];
 

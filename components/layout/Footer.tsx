@@ -1,12 +1,18 @@
 import Link from "next/link";
-import { mainNav, REMOTE_SUPPORT_HREF } from "@/lib/site";
+import { mainNav, REMOTE_SUPPORT_HREF, type NavItem } from "@/lib/site";
 
-export function Footer() {
+export function Footer({
+  nav = mainNav,
+  showRemoteSupport = true,
+}: {
+  nav?: NavItem[];
+  showRemoteSupport?: boolean;
+}) {
   return (
     <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <nav aria-label="푸터 메뉴" className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
-          {mainNav.map((item) => (
+          {nav.map((item) => (
             <div key={item.id}>
               <p className="text-sm font-semibold text-navy">{item.label}</p>
               <ul className="mt-3 space-y-2">
@@ -17,7 +23,7 @@ export function Footer() {
                     </Link>
                   </li>
                 ))}
-                {item.id === "support" ? (
+                {item.id === "support" && showRemoteSupport ? (
                   <li>
                     <Link href={REMOTE_SUPPORT_HREF} className="text-sm text-slate-600 hover:text-navy">
                       원격지원 연결
@@ -27,6 +33,18 @@ export function Footer() {
               </ul>
             </div>
           ))}
+          {showRemoteSupport && !nav.some((item) => item.id === "support") ? (
+            <div>
+              <p className="text-sm font-semibold text-navy">고객지원</p>
+              <ul className="mt-3 space-y-2">
+                <li>
+                  <Link href={REMOTE_SUPPORT_HREF} className="text-sm text-slate-600 hover:text-navy">
+                    원격지원 연결
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          ) : null}
         </nav>
 
         <div className="mt-12 flex flex-col gap-6 border-t border-slate-200 pt-10 sm:flex-row sm:items-center">

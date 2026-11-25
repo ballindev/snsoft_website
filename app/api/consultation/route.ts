@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createInquiry } from "@/lib/admin-data";
 import { parseConsultationPayload, validateConsultation } from "@/lib/consultation";
+import { sendConsultationEmails } from "@/lib/consultation-email";
 import { isDatabaseConfigured } from "@/lib/db";
 
 export async function POST(request: Request) {
@@ -30,10 +31,25 @@ export async function POST(request: Request) {
 
   try {
     const inquiry = await createInquiry(payload);
+    const mail = await sendConsultationEmails(payload, inquiry.id);
+
     if (process.env.NODE_ENV === "development") {
-      console.info("[consultation] saved", { id: inquiry.id, company: inquiry.company });
+      console.info("[consultation] saved", {
+        id: inquiry.id,
+        company: inquiry.company,
+        notified: mail.notified,
+        confirmed: mail.confirmed,
+        mailError: mail.error,
+      });
     }
-    return NextResponse.json({ ok: true, delivered: true, id: inquiry.id });
+
+    return NextResponse.json({
+      ok: true,
+      delivered: true,
+      id: inquiry.id,
+      emailed: mail.notified,
+      confirmed: mail.confirmed,
+    });
   } catch (error) {
     console.error("[consultation]", error);
     return NextResponse.json(

@@ -72,3 +72,15 @@ model AdminUser {
 
   @@map("admin_users")
 }
+
+model NavMenuVisibility {
+  href      String   @id
+  label     String
+  section   String
+  visible   Boolean  @default(true)
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([section])
+  @@map("nav_menu_visibility")
+}

@@ -8,6 +8,7 @@ const nav = [
   { href: "/admin/inquiries", label: "온라인 문의" },
   { href: "/admin/faqs", label: "자주 묻는 질문" },
   { href: "/admin/screens", label: "예시 화면" },
+  { href: "/admin/menus", label: "메뉴 표시" },
   { href: "/admin/accounts", label: "관리자 계정" },
 ];
 
@@ -29,13 +30,21 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <p className="text-xs font-semibold tracking-wide text-brand">SN Soft</p>
             <h1 className="text-lg font-semibold text-navy">사이트 관리</h1>
           </div>
-          <button
-            type="button"
-            onClick={logout}
-            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-navy"
-          >
-            로그아웃
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-navy"
+            >
+              홈페이지
+            </Link>
+            <button
+              type="button"
+              onClick={logout}
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-navy"
+            >
+              로그아웃
+            </button>
+          </div>
         </div>
         <nav className="mx-auto max-w-6xl overflow-x-auto px-4 sm:px-6">
           <ul className="flex gap-1 pb-3">

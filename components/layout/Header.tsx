@@ -5,6 +5,7 @@ import { useEffect, useState, type ComponentType } from "react";
 import {
   Archive,
   BadgeCheck,
+  BrickWall,
   Briefcase,
   Building2,
   Calculator,
@@ -13,6 +14,7 @@ import {
   CircleDot,
   ClipboardList,
   Factory,
+  FileInput,
   FileText,
   Handshake,
   Headset,
@@ -25,16 +27,16 @@ import {
   Package,
   Receipt,
   Salad,
-  Ship,
   Smile,
   Stethoscope,
   Store,
+  Ticket,
   Users,
   Utensils,
   Wrench,
   X,
 } from "lucide-react";
-import { CONSULTATION_HREF, mainNav, REMOTE_SUPPORT_HREF } from "@/lib/site";
+import { CONSULTATION_HREF, mainNav, REMOTE_SUPPORT_HREF, type NavItem } from "@/lib/site";
 
 const linkIcons: Record<string, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   "/products/accounting": Calculator,
@@ -43,16 +45,18 @@ const linkIcons: Record<string, ComponentType<{ className?: string; "aria-hidden
   "/products/inventory": Package,
   "/products/orders": ClipboardList,
   "/products/field-sales": Handshake,
-  "/products/store": Store,
+  "/products/purchase-order": FileInput,
+  "/products/maintenance": Wrench,
   "/products/bom": Factory,
-  "/products/after-service": Wrench,
-  "/products/trade": Ship,
   "/products/crm": Users,
   "/industries/meat-processing": Utensils,
   "/industries/medical-device": Stethoscope,
   "/industries/dental": Smile,
   "/industries/tire": CircleDot,
   "/industries/food-service": Salad,
+  "/industries/store": Store,
+  "/industries/gift-voucher": Ticket,
+  "/industries/tile-hardware": BrickWall,
   "/industries/building": Building2,
   "/industries/vehicle": Car,
   "/pricing/standard": BadgeCheck,
@@ -78,7 +82,15 @@ function MenuLink({ href, label, onClick }: { href: string; label: string; onCli
   );
 }
 
-export function Header() {
+export function Header({
+  nav = mainNav,
+  showRemoteSupport = true,
+  showConsultationCta = true,
+}: {
+  nav?: NavItem[];
+  showRemoteSupport?: boolean;
+  showConsultationCta?: boolean;
+}) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState<string | null>(null);
@@ -106,7 +118,7 @@ export function Header() {
     setMobileOpen(false);
   }
 
-  const activeItem = mainNav.find((item) => item.id === openMenu);
+  const activeItem = nav.find((item) => item.id === openMenu);
 
   return (
     <header
@@ -126,7 +138,7 @@ export function Header() {
         </Link>
 
         <nav className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 xl:pointer-events-auto xl:flex" aria-label="주요 메뉴">
-          {mainNav.map((item) => {
+          {nav.map((item) => {
             const expanded = openMenu === item.id;
             return (
               <button
@@ -147,24 +159,30 @@ export function Header() {
         </nav>
 
         <div className="relative z-20 ml-auto flex shrink-0 items-center gap-3 sm:gap-5">
-          <Link href={REMOTE_SUPPORT_HREF} className="inline-flex items-center gap-1.5 text-base font-medium tracking-[-0.04em] text-[#262626] transition hover:text-black max-xl:hidden" onClick={closeAll}>
-            <Headset className="size-5 text-brand" aria-hidden />
-            원격지원
-          </Link>
-          <Link
-            href={CONSULTATION_HREF}
-            className="hidden rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark xl:inline-flex"
-            onClick={closeAll}
-          >
-            도입 상담
-          </Link>
-          <Link
-            href={CONSULTATION_HREF}
-            className="rounded-full bg-brand px-3.5 py-2 text-sm font-semibold text-white xl:hidden"
-            onClick={closeAll}
-          >
-            도입 상담
-          </Link>
+          {showRemoteSupport ? (
+            <Link href={REMOTE_SUPPORT_HREF} className="inline-flex items-center gap-1.5 text-base font-medium tracking-[-0.04em] text-[#262626] transition hover:text-black max-xl:hidden" onClick={closeAll}>
+              <Headset className="size-5 text-brand" aria-hidden />
+              원격지원
+            </Link>
+          ) : null}
+          {showConsultationCta ? (
+            <>
+              <Link
+                href={CONSULTATION_HREF}
+                className="hidden rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark xl:inline-flex"
+                onClick={closeAll}
+              >
+                도입 상담
+              </Link>
+              <Link
+                href={CONSULTATION_HREF}
+                className="rounded-full bg-brand px-3.5 py-2 text-sm font-semibold text-white xl:hidden"
+                onClick={closeAll}
+              >
+                도입 상담
+              </Link>
+            </>
+          ) : null}
           <button
             type="button"
             className="relative z-20 inline-flex size-11 shrink-0 cursor-pointer items-center justify-center text-navy touch-manipulation xl:hidden"
@@ -212,7 +230,7 @@ export function Header() {
       {mobileOpen ? (
         <div id="mobile-nav" className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-slate-200 bg-white xl:hidden">
           <nav className="px-5 py-2" aria-label="모바일 메뉴">
-            {mainNav.map((item) => {
+            {nav.map((item) => {
               const expanded = mobileSection === item.id;
               return (
                 <div key={item.id} className="border-b border-slate-100">
@@ -246,13 +264,17 @@ export function Header() {
             })}
           </nav>
           <div className="grid gap-3 px-5 py-5">
-            <Link href={REMOTE_SUPPORT_HREF} className="inline-flex items-center gap-2 text-base font-medium tracking-[-0.04em] text-[#262626]" onClick={closeAll}>
-              <Headset className="size-5 text-brand" aria-hidden />
-              원격지원
-            </Link>
-            <Link href={CONSULTATION_HREF} className="inline-flex justify-center rounded-full bg-brand px-4 py-3 text-sm font-semibold text-white" onClick={closeAll}>
-              무료 도입 상담 / 데모 신청
-            </Link>
+            {showRemoteSupport ? (
+              <Link href={REMOTE_SUPPORT_HREF} className="inline-flex items-center gap-2 text-base font-medium tracking-[-0.04em] text-[#262626]" onClick={closeAll}>
+                <Headset className="size-5 text-brand" aria-hidden />
+                원격지원
+              </Link>
+            ) : null}
+            {showConsultationCta ? (
+              <Link href={CONSULTATION_HREF} className="inline-flex justify-center rounded-full bg-brand px-4 py-3 text-sm font-semibold text-white" onClick={closeAll}>
+                무료 도입 상담 / 데모 신청
+              </Link>
+            ) : null}
           </div>
         </div>
       ) : null}

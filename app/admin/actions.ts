@@ -13,6 +13,7 @@ import {
   listScreenSlides,
   reorderFaqs,
   reorderScreenSlides,
+  setNavMenuVisible,
   updateAccount,
   updateFaq,
   updateInquiryStatus,
@@ -24,7 +25,9 @@ function revalidateAdmin() {
   revalidatePath("/admin/inquiries");
   revalidatePath("/admin/faqs");
   revalidatePath("/admin/screens");
+  revalidatePath("/admin/menus");
   revalidatePath("/admin/accounts");
+  revalidatePath("/");
   revalidatePath("/support/faq");
   revalidatePath("/products/inventory");
 }
@@ -115,4 +118,10 @@ export async function refreshFaqsAction() {
 
 export async function refreshScreensAction() {
   return listScreenSlides();
+}
+
+export async function setNavMenuVisibleAction(href: string, visible: boolean) {
+  const item = await setNavMenuVisible(href, visible);
+  revalidateAdmin();
+  return item;
 }

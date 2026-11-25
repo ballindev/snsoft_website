@@ -1,5 +1,4 @@
 import { ClipboardList, GraduationCap, MessagesSquare, Settings2 } from "lucide-react";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const steps = [
@@ -58,9 +57,6 @@ export function OnboardingProcess() {
             );
           })}
         </ol>
-        <div className="mx-auto mt-10 max-w-3xl">
-          <ImagePlaceholder label="전문 컨설턴트 방문 또는 화상 데모 시연 장면" resolution="1200x675px" />
-        </div>
       </div>
     </section>
   );
